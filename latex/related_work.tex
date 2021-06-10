@@ -1,0 +1,75 @@
+\newpage
+
+
+\section{Related work}
+
+\bigskip
+
+
+This paper relates to many broad areas of research: The major topics that are covered in the paper are briefly discussed below.
+
+
+
+
+\subsection{Convolutional Neural Network}
+% \label{sec:2}
+
+The Convolutional Neural Network (CNN) uses deep learning architecture inspired by the visual perception system of the living creatures.
+\cite{hubel1968receptive}
+
+\bigskip
+The basic components of a CNN consist of three types of layers, convolutional layer, pooling layer, and fully-connected layer. 
+The convolutional layer learns feature representations of image data. 
+The pooling layer aims to preserve the detected features in a smaller representation by discarding less significant data at the cost of spatial resolution. A CNN may consist of multiple convolutional and pooling layers and they are connected with one or more fully-connected layers that aim to perform high-level reasoning [11]. They take all neurons in the previous layer, connect them to every single neuron of the current layer to generate semantic information.\cite{zeiler2014visualizing}
+
+\medskip
+
+CNN's have been applied in image classification for a long time.\cite{zuo2015exemplar,nogueira2017towards} With their better capability of joint feature and classifier learning
+CNN's can achieve better classification accuracy on large scale datasets 
+Compared to the other methods.\cite{simonyan2014very} A point to be noted that, all the best results are coming from supervised training using labeled data. However, these labeled data are not easy to collect. Furthermore, these systems are difficult to scale up and can not handle many types of fine-grained classes. To solve this problem, some researchers propose to find localized regions in an unsupervised manner.\cite{xie2016unsupervised}
+
+
+\subsection{Self-supervised representation learning}  
+
+Self-supervised learning is a subset of unsupervised learning methods, in which CNN is explicitly trained with automatically generated labels. 
+
+\medskip
+
+Since The labels are automatically generated during self-supervised training large-scale datasets can be used for self-supervised training. Trained with these generated labels, self-supervised methods achieve promising results, and the gap between supervised methods and self-supervised learning methods are getting closer with new researches.\cite{jing2020self}
+
+\medskip
+
+Representation learning is a set of techniques that allows a system to automatically discover the representations needed for feature detection or classification from image data.
+A wide variety of representation learning methods have been proposed for the self-training of deep convolutional neural networks. 
+
+
+
+These methods use various pre-designed tasks called pretext tasks, which do not require annotated data to learn the representation and they are applied in-painting \cite{pathak2016context}, patch context and jigsaw puzzles \cite{doersch2016unsupervised}; \cite{noroozi2017unsupervised}; \cite{noroozi2018boosting}, clustering \cite{caron2019deep}; \cite{zhuang2019selfsupervised} colorization \cite{zhang2016colorful},
+generation \cite{jenni2018selfsupervised}; \cite{donahue2019large}, predicting transformations \cite{gidaris2018unsupervised}; \cite{zhang2019aet} and  predicting rotation\cite{gidaris2018unsupervised}.
+
+\bigskip
+
+But still, they have not managed to match the performance of supervised-learned representations, but they have proved to be good alternatives for transferring on other vision tasks, such as object recognition, object detection, and semantic segmentation. 
+
+
+
+
+
+\subsection{Data Clustering} 
+
+Much research has been devoted to data clustering methods. We can primarily divide the existing methods into three categories: distance-based, density-based, and connectivity-based methods.  \cite{madhulatha2012overview}
+
+Distance-based methods, such as the K-means \cite{jin2010k}, seek to find the relationship between data points based on various distance metrics. Density-based methods attempt to cluster data points via a proper density function, including the density-based spatial clustering of applications with noise.\cite{inbook} Compared with the previous methods, connectivity-based methods cluster data points into a cluster if they are highly connected. \cite{LEE2021107708}
+
+
+
+\subsection{Combination of Feature learning and Clustering} 
+
+Recently, several methods have been proposed to combine feature learning with clustering into a single model. Such as deep embedded clustering (DEC)\cite{xie2016unsupervised} which is a method that simultaneously learns feature representations and cluster assignments using deep neural networks. DEC learns a mapping from the data space to a lower-dimensional feature space in which it iteratively optimizes a clustering objective. 
+
+\medskip
+
+There are also other methods i.e: DAC \cite{chang2017deep} which leverages the architecture of CNNs for image clustering. Additionally, Another clustering method  DeepCluster  \cite{caron2018deep} that jointly learns the parameters of a neural network and the cluster assignments of the resulting features. DeepCluster iteratively groups the features with a standard clustering algorithm, k-means, and uses the subsequent assignments as supervision to update the weights of the network.
+
+
+

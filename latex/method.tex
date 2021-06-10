@@ -1,0 +1,103 @@
+
+\newpage
+
+\section{Method}
+\label{sec:method}
+
+The method of the paper can be described in a three step process:
+
+\medskip
+
+First, Producing semantically meaningful feature representations using a pretext task, which is done in a Self supervised manner. 
+
+\medskip
+
+Second, Classify each image and its nearest neighbors together using a novel loss function.
+
+\medskip
+
+Third, Using a self-labeling approach to reduce noise and make the clustering as close as possible to the class distribution of the k nearest neighbors in the neighbor selection. 
+
+\subsection{Representation learning for semantic clustering and Pretext Task}
+
+
+The paper uses representation learning as the  pretext task $\tau$, that learns an embedding function $\Phi_\theta$ - parameterized by a neural network with weights $\theta$ - that maps images into feature representations.
+
+\begin{equation}
+\label{eq:pretext_task}
+    \min_{\theta}d(\Phi_\theta(X_i), \Phi_\theta(T[X_i])).
+\end{equation}
+
+The main idea behind this is that if we transform the images, whether it be cropping or changing contrast, the high level features should remain the same. 
+
+\medskip
+
+After  transforming the images and getting a new dataset of transformed images we use a convolution neural network to produce a feature representation of both the images and the transformed images and optimize the distance between the outputs for the image and the transformed image . When the original image and transformed image are in the same cluster with the objective of minimising the distance between $[X_i]$ and their augmentations $(T[X_i])$, the learned representations are much more meaningful.
+
+
+
+
+\subsection{A semantic clustering loss} 
+
+After getting a meaningful representation, we can apply K-means or any clustering algorithm to it . But naively applying K-means to get K clusters can lead to ‘cluster degeneracy’.
+
+To solve this issue the paper introduces Semantic clustering loss, which aims to learn a clustering function $\Phi_\eta$ - parameterized by a neural network with weights $\eta$ which is able to classify a sample $X_i$ and its mined neighbors $\mathcal{N}_{X_i}$ together. 
+
+The function $\Phi_\eta$ terminates in a softmax function to perform a soft assignment over the clusters $\mathcal{C}=\left\{1,\ldots,C\right\}$, with $\Phi_\eta \left(X_i\right) \in [0,1]^C$. The probability of sample $X_i$ being assigned to cluster $c$ is denoted as $\Phi_\eta^c(X_i)$. the weights of $\Phi_\eta$ are learned by minimizing the following objective:
+
+\begin{equation}
+\label{eq:loss_objective}
+\begin{split}
+\Lambda = -\frac{1}{|\mathcal{D}|}\sum\limits_{X\in\mathcal{D}}\sum\limits_{k\in\mathcal{N}_{X}}&\log\left<\Phi_\eta(X),\Phi_\eta(k)\right> + \lambda\sum_{c\in\mathcal{C}} \Phi_\eta'^c \log \Phi_\eta'^c, \\
+&\text{with~} \Phi_\eta'^c = \frac{1}{|\mathcal{D}|}\sum\limits_{X\in\mathcal{D}}\Phi_\eta^c(X).
+\end{split}
+\end{equation}
+
+
+
+
+
+The idea is to pass these images and its mined neighbors from the previous stage to a Neural Network to output probabilities for all the classes. The classes are chosen using some knowledge initially, the paper uses the knowledge of ground truth for the evaluation purposes.  
+
+
+\medskip
+
+The goal of the loss function is to make the clustering of an image as close as possible to the class distribution of the k nearest neighbors.
+This is done by the dot product of the image vector of probabilities and its neighbor’s vector. 
+
+
+
+
+
+
+
+\subsection{ Fine-tuning through self-labeling} 
+
+After clustering, some of the data points do not belong to the same semantic cluster. These false-positive examples make uncertain predictions. Therefore, the authors used a self-labeling approach to correct for mistakes due to noisy nearest neighbors 
+using the already well-classified examples  \cite{sohn2020fixmatch}. To be more specific, each sample was combined with K $\geq$ 1 neighbors, some of which unavoidably do not relate to the corresponding semantic cluster. These false-positive samples point to predictions for which the network is less confident.  At the same time, the authors inspected that examples with highly confident predictions tend to be classified into a proper cluster, and consequently, a self-labeling strategy can be used to utilize the already well-classified examples, and correct the errors due to noisy nearest neighbors.
+ 
+
+\begin{algorithm}[H]
+\small{
+\caption{Semantic Clustering by Adopting Nearest neighbors (SCAN)}
+\label{alg: algorithm}
+\begin{algorithmic}
+\State \textbf{Input:} Dataset $\mathcal{D}$, Clusters $\mathcal{C}$, Task $\tau$, Neural Nets $\Phi_\theta$ and $\Phi_\eta$, Neighbors $\mathcal{N}_\mathcal{D}=\{\}$.
+
+\State Optimize $\Phi_\theta$ with task $\tau$ in Eq.~\ref{eq:pretext_task}. \Comment Pretext Task Step 
+\For{$X_i \in \mathcal{D}$}
+\State $\mathcal{N}_\mathcal{D} \leftarrow \mathcal{N}_{\mathcal{D}} \cup \mathcal{N}_{X_i}$, with $\mathcal{N}_{X_i} = K$ neighboring samples of $\Phi_\theta(X_i)$.
+\EndFor
+\While{SCAN-loss decreases} \Comment Clustering Step
+\State Update $\Phi_\eta$ with SCAN-loss, i.e. $\Lambda(\Phi_\eta(\mathcal{D}), \mathcal{N}_{\mathcal{D}}, C)$ in Eq.~\ref{eq:loss_objective}
+\EndWhile 
+
+\While{$Len(Y)$ increases} \Comment Self-Labeling Step
+\State Y $\leftarrow$ ($\Phi_\eta(\mathcal{D}) >$ threshold)   
+\State Update $\Phi_\eta$ with cross-entropy loss, i.e. $H(\Phi_\eta(\mathcal{D}), Y)$
+\EndWhile
+
+\State \textbf{Return:} $\Phi_\eta(\mathcal{D})$ \Comment{$\mathcal{D}$ is divided over $C$ clusters}
+\end{algorithmic}
+}
+\end{algorithm}

@@ -1,0 +1,24 @@
+\section{Introduction}
+\label{sec:intro}
+A conventional image classification task involves labels that govern the features it learns through a Loss function. Humans are better at detecting objects where CNN's use supervised learning algorithms that require a huge amount of labeled images. However, acquiring labeled data or manually labeling data is often an expensive process and in the real-world scenario labeled data are hard to come by.
+
+\medskip
+There are many approaches to solve this problem such as semi-supervised, self-supervised
+\cite{DeepMetricLearning} 
+semi-supervised learning is the branch of machine learning concerned with using labeled as well as unlabelled data to perform certain learning tasks. But they still require some amount of labeled data to get better performance. However, a major question remains. How can we classify images when there are no ground-truths available during the training or what if we do not know how many classes are there to classify?
+
+\medskip
+
+To address these questions researchers have been trying to use unsupervised learning methods.\cite{xie2016unsupervised} The goal of this approach is to cluster similar images together, while images in different clusters are dissimilar. Applying clustering algorithms to images is a difficult task. For instance, consider two images of dogs, one black and one white. The different pixel values cannot be directly clustered. So we need a feature selector. But Hand-engineered features are quite tedious to produce and do not perform that well in practice. 
+Self-supervised learning such as Representation learning \cite{doersch2016unsupervised}\cite{gidaris2018unsupervised} can be used to generate feature representations from images. When we have a better representation of an image, we can cluster them using a loss function. But this approach will tend to focus on low-level features and we can not be sure if this will be semantically meaningful.  
+
+\medskip
+The method described in the paper separates the feature representation and the clustering resulting in inaccuracy almost as similar to the supervised method. Also, to further improve results the authors applied Fine-Tuning through self-labeling. The authors of the paper also observed, depending on the K value, sometimes semantically different images were clustered together. To address this issue, images that had a probability of belonging to a cluster were selected and labeled and these labeled images were used with their neighbors to update the weights and Cross entropy loss that optimizes those data points. Which as a result, makes the predictions more accurate. 
+
+% \begin{figure}
+% \begin{center}
+% \includegraphics[width=3in]{fig1.pdf}
+% \end{center}
+% \caption{Consistency comparison in fitting surrogate model in the tidal
+% power example. \label{fig:first}}
+% \end{figure}
